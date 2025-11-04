@@ -1,0 +1,126 @@
+.navbar {
+  background: #4caf50;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  border-radius: 10px;
+  align-items: center;
+}
+.navbar .logo {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.navbar .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+.navbar .nav-links li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+}
+.navbar .nav-links li a.active,
+.navbar .nav-links li a:hover {
+  text-decoration: underline;
+}
+
+.banner {
+  background: url(https://chennai.vit.ac.in/wp-content/uploads/2020/03/campus-banner.jpg);
+  background-size: cover;
+  color: white;
+  text-align: center;
+  margin-top: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 100px 20px;
+}
+.banner.small-banner {
+  padding: 50px 20px;
+}
+.banner h1 { font-size: 2.5rem; margin-bottom: 10px; }
+.banner p { font-size: 1.2rem; margin-bottom: 20px; }
+.banner-btn {
+  background: #fff;
+  color: #4caf50;
+  padding: 12px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.banner-btn:hover {
+  background: #f0f0f0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+  padding: 20px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2 { margin-top: 0; }
+
+select, input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0 15px 0;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover { background: #43a047; }
+
+.ticket {
+  display: flex;
+  background: #fff;
+  border: 1px dashed #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.ticket-left { flex: 2; padding: 20px; border-right: 2px dashed #bbb; }
+.ticket-right { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; }
+.ticket h3 { margin: 0 0 10px; }
+.ticket strong { display: inline-block; margin: 5px 0; }
+
+#map { width: 100%; height: 250px; margin-top: 10px; border-radius: 10px; }
+
+@media (max-width: 500px) {
+  .ticket { flex-direction: column; }
+  .ticket-left, .ticket-right { border-right: none; border-bottom: 2px dashed #bbb; }
+}
+
+.assistant-box {
+  background: #f9f9ff;
+  padding: 15px;
+  border-left: 5px solid #4caf50;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
