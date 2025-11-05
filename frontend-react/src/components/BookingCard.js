@@ -79,7 +79,7 @@ const BookingCard = ({ onBookingSuccess }) => {
       if (onBookingSuccess) onBookingSuccess(result);
     } catch (err) {
       console.error('Booking error:', err);
-      alert('Booking failed. Please try again.');
+      alert('Only one ticket per user is allowed per day!!.');
     }
   };
 

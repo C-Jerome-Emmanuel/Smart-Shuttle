@@ -86,7 +86,7 @@ app.get('/api/bookings', authenticateToken, async (req, res) => {
   }
 });
 
-// ✅ POST /api/bookings — Create a booking for logged-in user
+// POST /api/bookings - Create a new booking
 app.post('/api/bookings', authenticateToken, async (req, res) => {
   const { name, destination, date, time, qrData } = req.body;
 
@@ -95,24 +95,32 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
   }
 
   try {
-    // Check if this user already has a booking
-    const existingBooking = await Booking.findOne({ userId: req.user.id });
+    // 🗓️ Get today’s date (normalized to only the date portion)
+    const today = new Date().toLocaleDateString();
+
+    // 🔍 Check if user has already booked *today*
+    const existingBooking = await Booking.findOne({
+      userId: req.user.id,
+      date: today
+    });
+
     if (existingBooking) {
       return res.status(409).json({
-        message: 'You already have an active booking! Only one ticket per user is allowed.',
+        message: 'You have already booked a seat today! Only one booking per day is allowed.'
       });
     }
 
-    // Check seat availability
-    const bookedSeatsCount = await Booking.countDocuments();
+    // 🪑 Check if seats are available
+    const bookedSeatsCount = await Booking.countDocuments({ date: today });
     if (bookedSeatsCount >= TOTAL_SHUTTLE_SEATS) {
-      return res.status(400).json({ message: 'No seats available! Shuttle is fully booked.' });
+      return res.status(400).json({ message: 'No more seats available! Shuttle is fully booked for today.' });
     }
 
+    // ✅ Create a new booking
     const newBooking = new Booking({
       name,
       destination,
-      date,
+      date: today,
       time,
       qrData,
       userId: req.user.id,
@@ -120,11 +128,14 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
 
     await newBooking.save();
     res.status(201).json(newBooking);
+
   } catch (error) {
-    console.error('Error creating booking:', error);
+    console.error('Booking error:', error);
     res.status(500).json({ message: 'Error creating booking', error: error.message });
   }
 });
+
+
 
 // ✅ DELETE /api/bookings/:id — Cancel a booking
 app.delete('/api/bookings/:id', authenticateToken, async (req, res) => {
