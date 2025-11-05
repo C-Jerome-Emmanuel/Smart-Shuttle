@@ -9,24 +9,24 @@ const BookingCard = ({ onBookingSuccess }) => {
   const [destination, setDestination] = useState('Airport');
   const [availability, setAvailability] = useState('');
   const [isBooked, setIsBooked] = useState(false);
-  const [loading, setLoading] = useState(false);
 
+  // Fetch seat availability
   useEffect(() => {
     fetchAvailability();
   }, [isBooked]);
 
   const fetchAvailability = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/seats`);
-      const data = await response.json();
+      const res = await fetch(`${API_BASE_URL}/seats`);
+      const data = await res.json();
       const msg =
         data.availableSeats > 0
           ? `${data.availableSeats} seat(s) remaining`
           : 'Shuttle is fully booked!';
       setAvailability(msg);
-    } catch (error) {
-      console.error('Error fetching availability:', error);
-      setAvailability('Error fetching seat data.');
+    } catch (err) {
+      console.error('Error fetching seats:', err);
+      setAvailability('Error fetching seat data');
     }
   };
 
@@ -38,7 +38,7 @@ const BookingCard = ({ onBookingSuccess }) => {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      alert('⚠️ Please log in again — your session has expired.');
+      alert('⚠️ Please log in again.');
       window.location.href = '/login';
       return;
     }
@@ -51,57 +51,51 @@ const BookingCard = ({ onBookingSuccess }) => {
       qrData: `Name: ${name.trim()}\nDestination: ${destination}\nStatus: Confirmed ✅`,
     };
 
-    setLoading(true);
-
     try {
-      const response = await fetch(`${API_BASE_URL}/bookings`, {
+      const res = await fetch(`${API_BASE_URL}/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // ✅ Attach token
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(bookingData),
       });
 
-      const result = await response.json();
+      const result = await res.json();
 
-      if (!response.ok) {
-        // Backend errors (401, 403, 409, etc.)
-        if (response.status === 401 || response.status === 403) {
-          alert('⚠️ Your session expired. Please log in again.');
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          alert('Session expired. Please log in again.');
           localStorage.removeItem('token');
           window.location.href = '/login';
           return;
         }
-        alert(`Booking failed: ${result.message}`);
-        return;
+        throw new Error(result.message || 'Booking failed.');
       }
 
       alert('🎉 Seat booked successfully!');
       setName('');
       setIsBooked(true);
       if (onBookingSuccess) onBookingSuccess(result);
-    } catch (error) {
-      console.error('Error booking seat:', error);
-      alert('An error occurred while booking. Please try again.');
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error('Booking error:', err);
+      alert('Booking failed. Please try again.');
     }
   };
 
   return (
     <div className="card">
-      <h2>Shuttle Seat Booking</h2>
+      <h2>🚌 Shuttle Seat Booking</h2>
+
       <input
         type="text"
-        id="name"
         placeholder="Enter your name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
+
       <select
-        id="destination"
         value={destination}
         onChange={(e) => setDestination(e.target.value)}
       >
@@ -111,12 +105,14 @@ const BookingCard = ({ onBookingSuccess }) => {
         <option value="Tambaram">Tambaram</option>
         <option value="Vandalur">Vandalur</option>
       </select>
-      <button onClick={bookSeat} disabled={loading}>
-        {loading ? 'Booking...' : 'Get My Seat'}
-      </button>
+
+      <button onClick={bookSeat}>Book My Seat</button>
+
       <p
-        id="availability"
-        style={{ color: availability.includes('remaining') ? 'green' : 'red' }}
+        style={{
+          color: availability.includes('remaining') ? 'green' : 'red',
+          marginTop: '10px',
+        }}
       >
         {availability}
       </p>
